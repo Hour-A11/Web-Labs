@@ -1,8 +1,0 @@
-*.log
-*.pyc
-__pycache__/
-djangoenv/
-env/
-venv/
-db.sqlite3
-.history
