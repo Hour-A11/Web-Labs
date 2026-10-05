@@ -16,3 +16,16 @@ def list_books(request):
 
 def aboutus(request):
     return render(request, 'bookmodule/aboutus.html')
+
+# lab5 views
+def html5_links(request):
+    return render(request, 'bookmodule/html5_links.html')
+
+def html5_text_formatting(request):
+    return render(request, 'bookmodule/html5_text_formatting.html')
+
+def html5_listing(request):
+    return render(request, 'bookmodule/html5_listing.html')
+
+def html5_tables(request):
+    return render(request, 'bookmodule/html5_tables.html')

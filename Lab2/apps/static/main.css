@@ -1,0 +1,63 @@
+/* Task 1: links page */
+.link-bar {
+    display: block;
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+    margin: 0;
+}
+.bar1 { background-color: #90ee90; }
+.bar2 { background-color: #555555; }
+.bar3 { background-color: #000000; }
+
+#qu-link1:link, #qu-link1:visited { color: red; }
+#qu-link1:hover { color: darkred; }
+#qu-link1:active { color: orangered; }
+
+#qu-link2:link, #qu-link2:visited { color: gold; }
+#qu-link2:hover { color: yellow; }
+#qu-link2:active { color: orange; }
+
+#qu-link3:link, #qu-link3:visited { color: white; }
+#qu-link3:hover { color: lightgray; }
+#qu-link3:active { color: silver; }
+
+/* Task 2: text formatting page */
+.formatting-title {
+    background-color: #f2f2d8;
+    color: #2e7d32;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Task 3: listing page */
+.listing-title {
+    background-color: #5f9ea0;
+    color: white;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Task 4: tables page */
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px 10px;
+}
+.fruit-table {
+    margin: 20px auto;
+    text-align: center;
+}
+.fruit-table caption {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.table2-caption {
+    text-align: center;
+}
+.camelid-table {
+    margin: 0 auto 20px auto;
+    text-align: center;
+}
