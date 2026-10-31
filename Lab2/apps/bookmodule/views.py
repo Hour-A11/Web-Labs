@@ -1,7 +1,8 @@
-
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Book
+from django.db.models import Q, Count, Sum, Avg, Max, Min
+
+from .models import Book, Address, Student
 
 
 def index(request):
@@ -44,9 +45,24 @@ def html5_tables(request):
 
 # lab6 views
 def __getBooksList():
-    book1 = {'id':12344321, 'title':'Continuous Delivery', 'author':'J.Humble and D. Farley'}
-    book2 = {'id':56788765,'title':'Reversing: Secrets of Reverse Engineering', 'author':'E. Eilam'}
-    book3 = {'id':43211234, 'title':'The Hundred-Page Machine Learning Book', 'author':'Andriy Burkov'}
+    book1 = {
+        'id': 12344321,
+        'title': 'Continuous Delivery',
+        'author': 'J.Humble and D. Farley'
+    }
+
+    book2 = {
+        'id': 56788765,
+        'title': 'Reversing: Secrets of Reverse Engineering',
+        'author': 'E. Eilam'
+    }
+
+    book3 = {
+        'id': 43211234,
+        'title': 'The Hundred-Page Machine Learning Book',
+        'author': 'Andriy Burkov'
+    }
+
     return [book1, book2, book3]
 
 
@@ -59,17 +75,24 @@ def search(request):
         # now filter
         books = __getBooksList()
         newBooks = []
+
         for item in books:
             contained = False
+
             if isTitle and string in item['title'].lower():
                 contained = True
+
             if not contained and isAuthor and string in item['author'].lower():
                 contained = True
 
             if contained:
                 newBooks.append(item)
 
-        return render(request, 'bookmodule/bookList.html', {'books':newBooks})
+        return render(
+            request,
+            'bookmodule/bookList.html',
+            {'books': newBooks}
+        )
 
     return render(request, 'bookmodule/search.html')
 
@@ -77,13 +100,138 @@ def search(request):
 # lab7 views
 def simple_query(request):
     mybooks = Book.objects.filter(title__icontains='and')
-    return render(request, 'bookmodule/bookList.html', {'books':mybooks})
+
+    return render(
+        request,
+        'bookmodule/bookList.html',
+        {'books': mybooks}
+    )
 
 
 def complex_query(request):
-    mybooks = Book.objects.filter(author__isnull=False).filter(title__icontains='and').filter(edition__gte=2).exclude(price__lte=100)[:10]
+    mybooks = (
+        Book.objects
+        .filter(author__isnull=False)
+        .filter(title__icontains='and')
+        .filter(edition__gte=2)
+        .exclude(price__lte=100)[:10]
+    )
 
     if len(mybooks) >= 1:
-        return render(request, 'bookmodule/bookList.html', {'books':mybooks})
+        return render(
+            request,
+            'bookmodule/bookList.html',
+            {'books': mybooks}
+        )
     else:
         return render(request, 'bookmodule/index.html')
+
+
+# Lab8 - Task1
+def lab8_task1(request):
+    books = Book.objects.filter(Q(price__lte=80))
+
+    return render(
+        request,
+        'bookmodule/lab8_books.html',
+        {
+            'books': books,
+            'page_title': 'Lab8 - Task1',
+            'description': 'Books with price less than or equal to 80.'
+        }
+    )
+
+
+# Lab8 - Task2
+def lab8_task2(request):
+    books = Book.objects.filter(
+        Q(edition__gt=3)
+        & (
+            Q(title__icontains='co')
+            | Q(author__icontains='co')
+        )
+    )
+
+    return render(
+        request,
+        'bookmodule/lab8_books.html',
+        {
+            'books': books,
+            'page_title': 'Lab8 - Task2',
+            'description': (
+                'Books with edition higher than 3 and '
+                'either title or author containing "co".'
+            )
+        }
+    )
+
+
+# Lab8 - Task3
+def lab8_task3(request):
+    books = Book.objects.filter(
+        ~(
+            Q(edition__gt=3)
+            & (
+                Q(title__icontains='co')
+                | Q(author__icontains='co')
+            )
+        )
+    )
+
+    return render(
+        request,
+        'bookmodule/lab8_books.html',
+        {
+            'books': books,
+            'page_title': 'Lab8 - Task3',
+            'description': 'Books that do not match the condition in Task2.'
+        }
+    )
+
+
+# Lab8 - Task4
+def lab8_task4(request):
+    books = Book.objects.order_by('title')
+
+    return render(
+        request,
+        'bookmodule/lab8_books.html',
+        {
+            'books': books,
+            'page_title': 'Lab8 - Task4',
+            'description': 'Books ordered by title.'
+        }
+    )
+
+
+# Lab8 - Task5
+def lab8_task5(request):
+    statistics = Book.objects.aggregate(
+        number_of_books=Count('id'),
+        total_price=Sum('price'),
+        average_price=Avg('price'),
+        maximum_price=Max('price'),
+        minimum_price=Min('price')
+    )
+
+    return render(
+        request,
+        'bookmodule/lab8_statistics.html',
+        {'statistics': statistics}
+    )
+
+
+# Lab8 - Task7
+def lab8_task7(request):
+    cities = (
+        Address.objects
+        .values('city')
+        .annotate(student_count=Count('student'))
+        .order_by('city')
+    )
+
+    return render(
+        request,
+        'bookmodule/lab8_students.html',
+        {'cities': cities}
+    )

@@ -1,0 +1,53 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+    Lab8 - Task5
+{% endblock title %}
+
+{% block content %}
+<h1>Book Statistics</h1>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Statistic</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Number of books</td>
+            <td>{{ statistics.number_of_books }}</td>
+        </tr>
+
+        <tr>
+            <td>Total price</td>
+            <td>
+                {{ statistics.total_price|default_if_none:"0"|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Average price</td>
+            <td>
+                {{ statistics.average_price|floatformat:2|default:"N/A" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Maximum price</td>
+            <td>
+                {{ statistics.maximum_price|floatformat:2|default:"N/A" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Minimum price</td>
+            <td>
+                {{ statistics.minimum_price|floatformat:2|default:"N/A" }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+    Lab8 - Task7
+{% endblock title %}
+
+{% block content %}
+<h1>Number of Students in Each City</h1>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>City</th>
+            <th>Number of students</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in cities %}
+        <tr>
+            <td>{{ item.city }}</td>
+            <td>{{ item.student_count }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No cities found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
