@@ -53,7 +53,7 @@ urlpatterns = [
         name="books.search"
     ),
 
-    # lab7 urls
+    # Lab7
     path(
         'simple/query',
         views.simple_query,
@@ -66,7 +66,7 @@ urlpatterns = [
         name="books.complex_query"
     ),
 
-    # Lab8 urls
+    # Lab8
     path(
         'lab8/task1',
         views.lab8_task1,
@@ -101,5 +101,42 @@ urlpatterns = [
         'lab8/task7',
         views.lab8_task7,
         name="books.lab8_task7"
+    ),
+
+    # Lab9
+    path(
+        'lab9/task1',
+        views.lab9_task1,
+        name="books.lab9_task1"
+    ),
+
+    path(
+        'lab9/task2',
+        views.lab9_task2,
+        name="books.lab9_task2"
+    ),
+
+    path(
+        'lab9/task3',
+        views.lab9_task3,
+        name="books.lab9_task3"
+    ),
+
+    path(
+        'lab9/task4',
+        views.lab9_task4,
+        name="books.lab9_task4"
+    ),
+
+    path(
+        'lab9/task5',
+        views.lab9_task5,
+        name="books.lab9_task5"
+    ),
+
+    path(
+        'lab9/task6',
+        views.lab9_task6,
+        name="books.lab9_task6"
     ),
 ]

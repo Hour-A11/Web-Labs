@@ -1,8 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.db.models import Q, Count, Sum, Avg, Max, Min
 
-from .models import Book, Address, Student
+from django.db.models import (
+    Q,
+    Count,
+    Sum,
+    Avg,
+    Max,
+    Min,
+    F,
+    Value,
+    FloatField,
+    ExpressionWrapper,
+    OuterRef,
+    Subquery,
+)
+
+from .models import Book, Address, Student, Publisher, Author
 
 
 def index(request):
@@ -26,7 +40,7 @@ def aboutus(request):
     return render(request, 'bookmodule/aboutus.html')
 
 
-# lab5 views
+# Lab5
 def html5_links(request):
     return render(request, 'bookmodule/html5_links.html')
 
@@ -43,7 +57,7 @@ def html5_tables(request):
     return render(request, 'bookmodule/html5_tables.html')
 
 
-# lab6 views
+# Lab6
 def __getBooksList():
     book1 = {
         'id': 12344321,
@@ -72,7 +86,6 @@ def search(request):
         isTitle = request.POST.get('option1')
         isAuthor = request.POST.get('option2')
 
-        # now filter
         books = __getBooksList()
         newBooks = []
 
@@ -97,7 +110,7 @@ def search(request):
     return render(request, 'bookmodule/search.html')
 
 
-# lab7 views
+# Lab7
 def simple_query(request):
     mybooks = Book.objects.filter(title__icontains='and')
 
@@ -234,4 +247,136 @@ def lab8_task7(request):
         request,
         'bookmodule/lab8_students.html',
         {'cities': cities}
+    )
+
+
+# Lab9 - Task1
+def lab9_task1(request):
+    total_quantity = (
+        Book.objects.aggregate(total=Sum('quantity'))['total'] or 0
+    )
+
+    if total_quantity > 0:
+        books = Book.objects.annotate(
+            availability=ExpressionWrapper(
+                F('quantity') * 100.0 / total_quantity,
+                output_field=FloatField()
+            )
+        )
+    else:
+        books = Book.objects.annotate(
+            availability=Value(0.0, output_field=FloatField())
+        )
+
+    return render(
+        request,
+        'bookmodule/lab9_books.html',
+        {
+            'books': books,
+            'total_quantity': total_quantity
+        }
+    )
+
+
+# Lab9 - Task2
+def lab9_task2(request):
+    publishers = Publisher.objects.annotate(
+        total_stock=Sum('book__quantity', default=0)
+    ).order_by('name')
+
+    return render(
+        request,
+        'bookmodule/lab9_publishers.html',
+        {
+            'publishers': publishers,
+            'task': 2
+        }
+    )
+
+
+# Lab9 - Task3
+def lab9_task3(request):
+    oldest_book = (
+        Book.objects
+        .filter(publisher=OuterRef('pk'))
+        .order_by('pubdate', 'pk')
+    )
+
+    publishers = Publisher.objects.annotate(
+        oldest_title=Subquery(oldest_book.values('title')[:1]),
+        oldest_date=Min('book__pubdate')
+    ).order_by('name')
+
+    return render(
+        request,
+        'bookmodule/lab9_publishers.html',
+        {
+            'publishers': publishers,
+            'task': 3
+        }
+    )
+
+
+# Lab9 - Task4
+def lab9_task4(request):
+    publishers = Publisher.objects.annotate(
+        average_price=Avg('book__price'),
+        minimum_price=Min('book__price'),
+        maximum_price=Max('book__price')
+    ).order_by('name')
+
+    return render(
+        request,
+        'bookmodule/lab9_publishers.html',
+        {
+            'publishers': publishers,
+            'task': 4
+        }
+    )
+
+
+# Lab9 - Task5
+def lab9_task5(request):
+    publishers = Publisher.objects.annotate(
+        highly_rated_count=Count(
+            'book',
+            filter=Q(book__rating__gte=4)
+        ),
+        highly_rated_quantity=Sum(
+            'book__quantity',
+            filter=Q(book__rating__gte=4),
+            default=0
+        )
+    ).order_by('name')
+
+    return render(
+        request,
+        'bookmodule/lab9_publishers.html',
+        {
+            'publishers': publishers,
+            'task': 5
+        }
+    )
+
+
+# Lab9 - Task6
+def lab9_task6(request):
+    publishers = Publisher.objects.annotate(
+        filtered_book_count=Count(
+            'book',
+            filter=(
+                Q(book__price__gt=50)
+                & Q(book__quantity__lt=5)
+                & Q(book__quantity__gte=1)
+            )
+        )
+    ).order_by('name')
+
+    return render(
+        request,
+        'bookmodule/lab9_publishers.html',
+        {
+            'publishers': publishers,
+            'task': 6
+        }
     )

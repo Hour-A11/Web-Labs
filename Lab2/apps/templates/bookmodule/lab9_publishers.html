@@ -1,0 +1,89 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+    Lab9 - Task{{ task }}
+{% endblock title %}
+
+{% block content %}
+<h1>Lab9 - Task{{ task }}</h1>
+
+{% if task == 2 %}
+<p>Total book stock for each publisher.</p>
+{% elif task == 3 %}
+<p>The oldest book for each publisher.</p>
+{% elif task == 4 %}
+<p>Average, minimum and maximum book prices for each publisher.</p>
+{% elif task == 5 %}
+<p>Number and total quantity of books with a rating of 4 or higher.</p>
+{% elif task == 6 %}
+<p>Number of books with price greater than 50 and quantity from 1 to 4.</p>
+{% endif %}
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Publisher</th>
+
+            {% if task == 2 %}
+                <th>Total stock</th>
+
+            {% elif task == 3 %}
+                <th>Oldest book</th>
+                <th>Publication date</th>
+
+            {% elif task == 4 %}
+                <th>Average price</th>
+                <th>Minimum price</th>
+                <th>Maximum price</th>
+
+            {% elif task == 5 %}
+                <th>Highly rated book count</th>
+                <th>Total quantity</th>
+
+            {% elif task == 6 %}
+                <th>Book count</th>
+            {% endif %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for publisher in publishers %}
+        <tr>
+            <td>{{ publisher.name }}</td>
+
+            {% if task == 2 %}
+                <td>{{ publisher.total_stock }}</td>
+
+            {% elif task == 3 %}
+                <td>{{ publisher.oldest_title|default_if_none:"No books" }}</td>
+                <td>
+                    {{ publisher.oldest_date|date:"Y-m-d"|default:"N/A" }}
+                </td>
+
+            {% elif task == 4 %}
+                <td>
+                    {{ publisher.average_price|floatformat:2|default:"N/A" }}
+                </td>
+                <td>
+                    {{ publisher.minimum_price|floatformat:2|default:"N/A" }}
+                </td>
+                <td>
+                    {{ publisher.maximum_price|floatformat:2|default:"N/A" }}
+                </td>
+
+            {% elif task == 5 %}
+                <td>{{ publisher.highly_rated_count }}</td>
+                <td>{{ publisher.highly_rated_quantity }}</td>
+
+            {% elif task == 6 %}
+                <td>{{ publisher.filtered_book_count }}</td>
+            {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+            <td>No publishers found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
